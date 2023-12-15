@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DualContouring2D.h"
+#include "TwoLineCheck2D.h"
 
 #include "ProceduralMeshComponent.h"
 
 // Sets default values
-ADualContouring2D::ADualContouring2D()
+ATwoLineCheck2D::ATwoLineCheck2D()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,7 +15,7 @@ ADualContouring2D::ADualContouring2D()
 }
 
 // Called when the game starts or when spawned
-void ADualContouring2D::BeginPlay()
+void ATwoLineCheck2D::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -24,19 +24,19 @@ void ADualContouring2D::BeginPlay()
 	
 }
 
-int32 ADualContouring2D::CF_GetIndexByXY(int32 X, int32 Y) const
+int32 ATwoLineCheck2D::CF_GetIndexByXY(int32 X, int32 Y) const
 {
 	return Y * ChunkSize.X + X;
 
 }
 
-int32 ADualContouring2D::CF_GetIndexByXY(FIntVector2 InPos) const
+int32 ATwoLineCheck2D::CF_GetIndexByXY(FIntVector2 InPos) const
 {
 	return InPos.Y * ChunkSize.X + InPos.X;
 
 }
 
-void ADualContouring2D::CF_Init()
+void ATwoLineCheck2D::CF_Init()
 {
 	Map.Reset();
 	Map.AddZeroed(ChunkSize.X * ChunkSize.Y);
@@ -71,7 +71,7 @@ void ADualContouring2D::CF_Init()
 	NoiseLite.SetDomainWarpAmp(FastNoiseLiteConfig.DomainWarpAmp);
 }
 
-void ADualContouring2D::CF_FillAndCreate()
+void ATwoLineCheck2D::CF_FillAndCreate()
 {
 	for (int32 i = 0; i < ChunkSize.X; ++i)
 	{
@@ -96,12 +96,12 @@ void ADualContouring2D::CF_FillAndCreate()
 	ProceduralMeshComponent->CreateMeshSection_LinearColor(0,Buffer_Vertex,Buffer_Triangle,{},{},{},{},true);
 }
 
-int32 ADualContouring2D::CF_GetRandomSeed() const
+int32 ATwoLineCheck2D::CF_GetRandomSeed() const
 {
 	return FMath::Rand();
 }
 
-void ADualContouring2D::CF_CheckCubeToFillBuffer(int32 X, int32 Y)
+void ATwoLineCheck2D::CF_CheckCubeToFillBuffer(int32 X, int32 Y)
 {
 	// check center pos
 	FIntVector2 CenterPos = FIntVector2(X+1,Y+1);
@@ -129,7 +129,7 @@ void ADualContouring2D::CF_CheckCubeToFillBuffer(int32 X, int32 Y)
 	}
 }
 
-FVector ADualContouring2D::CF_GetRealPosFromXY(float X, float Y)
+FVector ATwoLineCheck2D::CF_GetRealPosFromXY(float X, float Y)
 {
 	return FVector(X,Y,0) * CubeSize;
 }
