@@ -6,18 +6,23 @@
 #include "RandomSeedWorldType.h"
 
 #include "GameFramework/Actor.h"
-#include "MatchingCube3D_Smooth.generated.h"
+#include "MatchingCube3D_Smooth_WorldSample.generated.h"
 
 class UProceduralMeshComponent;
 
+/**
+ *	the MatchingCube3D_Smooth version is sample with local , cant use in Infinite world;
+ *  this version is sample from world;
+ */
+
 UCLASS()
-class RANDOMSEEDWORLD_API AMatchingCube3D_Smooth : public AActor
+class RANDOMSEEDWORLD_API AMatchingCube3D_Smooth_WorldSample : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AMatchingCube3D_Smooth();
+	AMatchingCube3D_Smooth_WorldSample();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

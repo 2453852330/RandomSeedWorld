@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MatchingCube3D_Smooth.h"
+#include "MatchingCube3D_Smooth_WorldSample.h"
 
 #include "CubeTable.h"
 #include "ProceduralMeshComponent.h"
 
 // Sets default values
-AMatchingCube3D_Smooth::AMatchingCube3D_Smooth()
+AMatchingCube3D_Smooth_WorldSample::AMatchingCube3D_Smooth_WorldSample()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -17,7 +17,7 @@ AMatchingCube3D_Smooth::AMatchingCube3D_Smooth()
 }
 
 // Called when the game starts or when spawned
-void AMatchingCube3D_Smooth::BeginPlay()
+void AMatchingCube3D_Smooth_WorldSample::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -25,23 +25,25 @@ void AMatchingCube3D_Smooth::BeginPlay()
 
 	CF_Init();
 	CF_FillAndCreate();
+
+	
 	
 	UE_LOG(LogTemp, Warning, TEXT("[MatchingCube2D->BeginPlay]Cost %f ms"),FPlatformTime::ToMilliseconds64(FPlatformTime::Cycles64()) - start_time);
 
 }
 
-int32 AMatchingCube3D_Smooth::CF_GetIndexByXYZ(int32 X, int32 Y, int32 Z) const
+int32 AMatchingCube3D_Smooth_WorldSample::CF_GetIndexByXYZ(int32 X, int32 Y, int32 Z) const
 {
 	return Z * ChunkSize.X * ChunkSize.Y + Y * ChunkSize.X + X;
 }
 
-int32 AMatchingCube3D_Smooth::CF_GetIndexByXYZ(FIntVector InPos) const
+int32 AMatchingCube3D_Smooth_WorldSample::CF_GetIndexByXYZ(FIntVector InPos) const
 {
 	return InPos.Z * ChunkSize.X * ChunkSize.Y + InPos.Y * ChunkSize.X + InPos.X;
 
 }
 
-void AMatchingCube3D_Smooth::CF_Init()
+void AMatchingCube3D_Smooth_WorldSample::CF_Init()
 {
 	Map.Reset();
 	Map.AddZeroed(ChunkSize.X * ChunkSize.Y * ChunkSize.Z);
@@ -82,10 +84,12 @@ void AMatchingCube3D_Smooth::CF_Init()
 	NoiseLite.SetDomainWarpAmp(FastNoiseLiteConfig.DomainWarpAmp);
 }
 
-void AMatchingCube3D_Smooth::CF_FillAndCreate()
+void AMatchingCube3D_Smooth_WorldSample::CF_FillAndCreate()
 {
 	FVector Center = FVector(ChunkSize) / 2.f;
-	
+
+	FVector Location = GetActorLocation();
+	FIntVector Pos = FIntVector(Location / CubeSize);
 	
 	for (int32 i = 0; i < ChunkSize.X; ++i)
 	{
@@ -99,7 +103,8 @@ void AMatchingCube3D_Smooth::CF_FillAndCreate()
 				int32 GetIndex = CF_GetIndexByXYZ(i,j,k);
 				if (bUseFastNoise)
 				{
-					float value = NoiseLite.GetNoise<float>(float(i),float(j),float(k));
+					
+					float value = NoiseLite.GetNoise<float>(float(i + Pos.X),float(j + Pos.Y),float(k + Pos.Z));
 					
 					Map_Value[GetIndex] = value;
 					Map[GetIndex] = value >= 0 ? 1 : 0;
@@ -132,12 +137,12 @@ void AMatchingCube3D_Smooth::CF_FillAndCreate()
 
 }
 
-int32 AMatchingCube3D_Smooth::CF_GetRandomSeed() const
+int32 AMatchingCube3D_Smooth_WorldSample::CF_GetRandomSeed() const
 {
 	return FMath::Rand();
 }
 
-void AMatchingCube3D_Smooth::CF_CheckCubeAndFillData(int32 X, int32 Y, int32 Z)
+void AMatchingCube3D_Smooth_WorldSample::CF_CheckCubeAndFillData(int32 X, int32 Y, int32 Z)
 {
 	TArray<FVector> PointList;
 	PointList.Reserve(8);
@@ -233,17 +238,17 @@ void AMatchingCube3D_Smooth::CF_CheckCubeAndFillData(int32 X, int32 Y, int32 Z)
 
 }
 
-int32 AMatchingCube3D_Smooth::CF_CheckPointIsValid(FVector InPos)
+int32 AMatchingCube3D_Smooth_WorldSample::CF_CheckPointIsValid(FVector InPos)
 {
 	return Map[CF_GetIndexByXYZ(InPos.X,InPos.Y,InPos.Z)];
 }
 
-FVector AMatchingCube3D_Smooth::CF_GetRealLocation(float X, float Y, float Z)
+FVector AMatchingCube3D_Smooth_WorldSample::CF_GetRealLocation(float X, float Y, float Z)
 {
 	return FVector(X,Y,Z) * CubeSize;
 }
 
-float AMatchingCube3D_Smooth::CF_GetLerpValueFromTwoPos(FIntVector A, FIntVector B) const
+float AMatchingCube3D_Smooth_WorldSample::CF_GetLerpValueFromTwoPos(FIntVector A, FIntVector B) const
 {
 	float a = Map_Value[CF_GetIndexByXYZ(A)];
 	float b = Map_Value[CF_GetIndexByXYZ(B)];

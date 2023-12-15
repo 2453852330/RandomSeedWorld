@@ -150,7 +150,7 @@ struct FFastNoiseLiteConfig
 
 	// 将八度音阶组合成分形的方法。
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="NoiseCreateParam|Fractal")
-	EFractalBPType FractalType = EFractalBPType::FractalType_FBm;
+	EFractalBPType FractalType = EFractalBPType::FractalType_None;
 	// 为获得分形噪声类型的最终值而采样的噪声层数。
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="NoiseCreateParam|Fractal")
 	int32 FractalOctaves = 3;
